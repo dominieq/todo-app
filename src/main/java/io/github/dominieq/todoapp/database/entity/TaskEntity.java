@@ -3,6 +3,8 @@ package io.github.dominieq.todoapp.database.entity;
 import com.google.common.base.MoreObjects;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -16,7 +18,11 @@ public class TaskEntity implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
+
+	@NotBlank(message = "TaskEntity.Description should not be empty.")
 	private String description;
+
+	@NotNull(message = "TaskEntity.Done should exist.")
 	private Boolean done;
 
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
