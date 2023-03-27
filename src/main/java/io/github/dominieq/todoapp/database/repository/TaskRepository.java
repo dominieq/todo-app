@@ -17,6 +17,8 @@ public interface TaskRepository {
 
 	List<TaskEntity> findByDone(boolean done);
 
+	boolean existsById(Integer id);
+
 	TaskEntity save(TaskEntity entity);
 
 }
