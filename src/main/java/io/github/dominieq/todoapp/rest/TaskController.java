@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,6 +32,18 @@ public class TaskController {
 	public ResponseEntity<List<TaskEntity>> readAllTasks(Pageable pageable) {
 		LOGGER.info("Reading all tasks with paging");
 		return ResponseEntity.ok(repository.findAll(pageable).getContent());
+	}
+
+	@GetMapping("/tasks/{id}")
+	ResponseEntity<TaskEntity> readTask(@PathVariable final int id) {
+		return ResponseEntity.of(repository.findById(id));
+	}
+
+	@PostMapping("/tasks")
+	ResponseEntity<TaskEntity> createTask(@RequestBody @Valid final TaskEntity entity) {
+		final TaskEntity created = repository.save(entity);
+		final URI uri = URI.create("/tasks/" + created.getId());
+		return ResponseEntity.created(uri).body(created);
 	}
 
 	@PutMapping("/tasks/{id}")
