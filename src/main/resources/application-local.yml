@@ -4,4 +4,7 @@ spring:
       enabled: true
       path: '/console'
   datasource:
-    url: 'jdbc:h2:file:./target/db'
+    url: 'jdbc:h2:file:./db'
+  jpa:
+    hibernate:
+      ddl-auto: 'validate'
