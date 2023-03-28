@@ -11,4 +11,4 @@ spring:
     hibernate:
       ddl-auto: 'create-drop'
 
-task.allowMultipleTasksFromTemplate: true
+task.template.allowMultipleTasks: true
