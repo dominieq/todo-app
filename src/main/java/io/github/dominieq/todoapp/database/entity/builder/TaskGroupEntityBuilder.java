@@ -1,6 +1,7 @@
 package io.github.dominieq.todoapp.database.entity.builder;
 
 import io.github.dominieq.todoapp.database.entity.AuditEntity;
+import io.github.dominieq.todoapp.database.entity.ProjectEntity;
 import io.github.dominieq.todoapp.database.entity.TaskEntity;
 import io.github.dominieq.todoapp.database.entity.TaskGroupEntity;
 
@@ -15,6 +16,7 @@ public final class TaskGroupEntityBuilder {
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
 	private Set<TaskEntity> tasks;
+	private ProjectEntity project;
 
 	private TaskGroupEntityBuilder() {
 	}
@@ -53,7 +55,18 @@ public final class TaskGroupEntityBuilder {
 		return this;
 	}
 
+	public TaskGroupEntityBuilder withProject(final ProjectEntity project) {
+		this.project = project;
+		return this;
+	}
+
 	public TaskGroupEntity build() {
-		return new TaskGroupEntity(id, description, done, new AuditEntity(createdOn, updatedOn), tasks);
+		return new TaskGroupEntity(
+				id,
+				description,
+				done,
+				new AuditEntity(createdOn, updatedOn),
+				tasks,
+				project);
 	}
 }

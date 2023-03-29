@@ -13,9 +13,13 @@ public class TaskGroupEntity extends AbstractTask {
 
 	private static final long serialVersionUID = -6638881662061913498L;
 
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
 	private Set<TaskEntity> tasks;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "project_id")
+	private ProjectEntity project;
 
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
 	public TaskGroupEntity() {
@@ -25,11 +29,13 @@ public class TaskGroupEntity extends AbstractTask {
 						   final String description,
 						   final Boolean done,
 						   final AuditEntity audit,
-						   final Set<TaskEntity> tasks) {
+						   final Set<TaskEntity> tasks,
+						   final ProjectEntity project) {
 
 		super(id, description, done, audit);
 
 		this.tasks = tasks;
+		this.project = project;
 	}
 
 	@Override
@@ -55,10 +61,15 @@ public class TaskGroupEntity extends AbstractTask {
 				.add("createdOn", audit.getCreatedOn())
 				.add("updatedOn", audit.getUpdatedOn())
 				.add("tasks", tasks)
+				.add("project", project)
 				.toString();
 	}
 
 	public Set<TaskEntity> getTasks() {
 		return tasks;
+	}
+
+	public ProjectEntity getProject() {
+		return project;
 	}
 }
