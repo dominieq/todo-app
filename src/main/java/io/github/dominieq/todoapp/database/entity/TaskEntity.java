@@ -1,18 +1,16 @@
 package io.github.dominieq.todoapp.database.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tasks")
-public class TaskEntity implements Serializable {
+public class TaskEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 1025020152602626836L;
 
@@ -29,12 +27,6 @@ public class TaskEntity implements Serializable {
 
 	private LocalDateTime deadline;
 
-	@JsonIgnore
-	private LocalDateTime createdOn;
-
-	@JsonIgnore
-	private LocalDateTime updatedOn;
-
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
 	protected TaskEntity() {
 	}
@@ -46,40 +38,29 @@ public class TaskEntity implements Serializable {
 					  final LocalDateTime createdOn,
 					  final LocalDateTime updatedOn) {
 
+		super(createdOn, updatedOn);
+
 		this.id = id;
 		this.description = description;
 		this.done = done;
 		this.deadline = deadline;
-		this.createdOn = createdOn;
-		this.updatedOn = updatedOn;
-	}
-
-	@PrePersist
-	void prePersist() {
-		this.createdOn = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	void preUpdate() {
-		this.updatedOn = LocalDateTime.now();
 	}
 
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
 		final TaskEntity that = (TaskEntity) o;
 		return Objects.equals(id, that.id) &&
 				Objects.equals(description, that.description) &&
 				Objects.equals(done, that.done) &&
-				Objects.equals(deadline, that.deadline) &&
-				Objects.equals(createdOn, that.createdOn) &&
-				Objects.equals(updatedOn, that.updatedOn);
+				Objects.equals(deadline, that.deadline);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, description, done, deadline, createdOn, updatedOn);
+		return Objects.hash(super.hashCode(), id, description, done, deadline);
 	}
 
 	@Override
@@ -87,10 +68,9 @@ public class TaskEntity implements Serializable {
 		return MoreObjects.toStringHelper(this)
 				.add("id", id)
 				.add("description", description)
-				.add("done", done)
 				.add("deadline", deadline)
-				.add("createdOn", createdOn)
-				.add("updatedOn", updatedOn)
+				.add("created_on", createdOn)
+				.add("updated_on", updatedOn)
 				.toString();
 	}
 
@@ -108,13 +88,5 @@ public class TaskEntity implements Serializable {
 
 	public LocalDateTime getDeadline() {
 		return deadline;
-	}
-
-	public LocalDateTime getCreatedOn() {
-		return createdOn;
-	}
-
-	public LocalDateTime getUpdatedOn() {
-		return updatedOn;
 	}
 }
