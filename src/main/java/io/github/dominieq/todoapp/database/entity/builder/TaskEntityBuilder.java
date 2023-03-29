@@ -2,6 +2,7 @@ package io.github.dominieq.todoapp.database.entity.builder;
 
 import io.github.dominieq.todoapp.database.entity.AuditEntity;
 import io.github.dominieq.todoapp.database.entity.TaskEntity;
+import io.github.dominieq.todoapp.database.entity.TaskGroupEntity;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ public final class TaskEntityBuilder {
 	private LocalDateTime deadline;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
+	private TaskGroupEntity group;
 
 	private TaskEntityBuilder() {
 	}
@@ -31,6 +33,7 @@ public final class TaskEntityBuilder {
 		this.deadline = entity.getDeadline();
 		this.createdOn = entity.getCreatedOn();
 		this.updatedOn = entity.getUpdatedOn();
+		this.group = entity.getGroup();
 		return this;
 	}
 
@@ -64,7 +67,18 @@ public final class TaskEntityBuilder {
 		return this;
 	}
 
+	public TaskEntityBuilder withGroup(final TaskGroupEntity group) {
+		this.group = group;
+		return this;
+	}
+
 	public TaskEntity build() {
-		return new TaskEntity(id, description, done, deadline, new AuditEntity(createdOn, updatedOn));
+		return new TaskEntity(
+				id,
+				description,
+				done,
+				deadline,
+				new AuditEntity(createdOn, updatedOn),
+				group);
 	}
 }

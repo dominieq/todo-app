@@ -9,12 +9,13 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Table(name = "tasks")
-public class TaskEntity implements Audit, Serializable {
+@Table(name = "task_groups")
+public class TaskGroupEntity implements Audit, Serializable {
 
-	private static final long serialVersionUID = 1025020152602626836L;
+	private static final long serialVersionUID = -6638881662061913498L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,51 +28,46 @@ public class TaskEntity implements Audit, Serializable {
 	@NotNull(message = "TaskEntity.Done should exist.")
 	private Boolean done;
 
-	private LocalDateTime deadline;
-
 	@JsonIgnore
 	@Embedded
 	private AuditEntity audit = new AuditEntity();
 
 	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "task_group_id")
-	private TaskGroupEntity group;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+	private Set<TaskEntity> tasks;
 
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
-	protected TaskEntity() {
+	public TaskGroupEntity() {
 	}
 
-	public TaskEntity(final Integer id,
-					  final String description,
-					  final Boolean done,
-					  final LocalDateTime deadline,
-					  final AuditEntity audit,
-					  final TaskGroupEntity group) {
+	public TaskGroupEntity(final Integer id,
+						   final String description,
+						   final Boolean done,
+						   final AuditEntity audit,
+						   final Set<TaskEntity> tasks) {
 
 		this.id = id;
 		this.description = description;
 		this.done = done;
-		this.deadline = deadline;
 		this.audit = audit;
-		this.group = group;
+		this.tasks = tasks;
 	}
 
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		final TaskEntity that = (TaskEntity) o;
+		final TaskGroupEntity that = (TaskGroupEntity) o;
 		return Objects.equals(id, that.id) &&
 				Objects.equals(description, that.description) &&
 				Objects.equals(done, that.done) &&
-				Objects.equals(deadline, that.deadline) &&
-				Objects.equals(audit, that.audit);
+				Objects.equals(audit, that.audit) &&
+				Objects.equals(tasks, that.tasks);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), id, description, done, deadline, audit);
+		return Objects.hash(id, description, done, audit, tasks);
 	}
 
 	@Override
@@ -79,10 +75,10 @@ public class TaskEntity implements Audit, Serializable {
 		return MoreObjects.toStringHelper(this)
 				.add("id", id)
 				.add("description", description)
-				.add("deadline", deadline)
-				.add("created_on", audit.getCreatedOn())
-				.add("updated_on", audit.getUpdatedOn())
-				.add("group", group)
+				.add("done", done)
+				.add("createdOn", audit.getCreatedOn())
+				.add("updatedOn", audit.getUpdatedOn())
+				.add("tasks", tasks)
 				.toString();
 	}
 
@@ -98,10 +94,6 @@ public class TaskEntity implements Audit, Serializable {
 		return done;
 	}
 
-	public LocalDateTime getDeadline() {
-		return deadline;
-	}
-
 	@JsonIgnore
 	@Override
 	public LocalDateTime getCreatedOn() {
@@ -114,7 +106,7 @@ public class TaskEntity implements Audit, Serializable {
 		return audit.getUpdatedOn();
 	}
 
-	public TaskGroupEntity getGroup() {
-		return group;
+	public Set<TaskEntity> getTasks() {
+		return tasks;
 	}
 }
