@@ -63,4 +63,21 @@ public class TaskController {
 
 		return ResponseEntity.notFound().build();
 	}
+
+	@PatchMapping("/tasks/{id}")
+	ResponseEntity<Void> toggleTask(@PathVariable final int id) {
+
+		if (repository.existsById(id)) {
+
+			repository.findById(id)
+					.map(entity -> TaskEntityBuilder.builder()
+							.from(entity)
+							.withDone(!entity.getDone())
+							.build())
+					.map(repository::save);
+			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.notFound().build();
+	}
 }
