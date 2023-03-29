@@ -1,6 +1,7 @@
 package io.github.dominieq.todoapp.rest;
 
 import io.github.dominieq.todoapp.database.entity.TaskEntity;
+import io.github.dominieq.todoapp.database.entity.builder.TaskEntityBuilder;
 import io.github.dominieq.todoapp.database.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,12 @@ public class TaskController {
 									@RequestBody @Valid final TaskEntity entity) {
 
 		if (repository.existsById(id)) {
-			repository.save(new TaskEntity(id, entity.getDescription(), entity.getDone()));
+			final TaskEntity toUpdate = TaskEntityBuilder.builder()
+					.from(entity)
+					.withId(id)
+					.build();
+
+			repository.save(toUpdate);
 			return ResponseEntity.noContent().build();
 		}
 
