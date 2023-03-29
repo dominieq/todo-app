@@ -1,16 +1,18 @@
 package io.github.dominieq.todoapp.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tasks")
-public class TaskEntity extends BaseEntity {
+public class TaskEntity implements Audit, Serializable {
 
 	private static final long serialVersionUID = 1025020152602626836L;
 
@@ -27,6 +29,10 @@ public class TaskEntity extends BaseEntity {
 
 	private LocalDateTime deadline;
 
+	@JsonIgnore
+	@Embedded
+	private AuditEntity audit = new AuditEntity();
+
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
 	protected TaskEntity() {
 	}
@@ -35,32 +41,30 @@ public class TaskEntity extends BaseEntity {
 					  final String description,
 					  final Boolean done,
 					  final LocalDateTime deadline,
-					  final LocalDateTime createdOn,
-					  final LocalDateTime updatedOn) {
-
-		super(createdOn, updatedOn);
+					  final AuditEntity audit) {
 
 		this.id = id;
 		this.description = description;
 		this.done = done;
 		this.deadline = deadline;
+		this.audit = audit;
 	}
 
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
 		final TaskEntity that = (TaskEntity) o;
 		return Objects.equals(id, that.id) &&
 				Objects.equals(description, that.description) &&
 				Objects.equals(done, that.done) &&
-				Objects.equals(deadline, that.deadline);
+				Objects.equals(deadline, that.deadline) &&
+				Objects.equals(audit, that.audit);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), id, description, done, deadline);
+		return Objects.hash(super.hashCode(), id, description, done, deadline, audit);
 	}
 
 	@Override
@@ -69,8 +73,8 @@ public class TaskEntity extends BaseEntity {
 				.add("id", id)
 				.add("description", description)
 				.add("deadline", deadline)
-				.add("created_on", createdOn)
-				.add("updated_on", updatedOn)
+				.add("created_on", audit.getCreatedOn())
+				.add("updated_on", audit.getUpdatedOn())
 				.toString();
 	}
 
@@ -88,5 +92,17 @@ public class TaskEntity extends BaseEntity {
 
 	public LocalDateTime getDeadline() {
 		return deadline;
+	}
+
+	@JsonIgnore
+	@Override
+	public LocalDateTime getCreatedOn() {
+		return audit.getCreatedOn();
+	}
+
+	@JsonIgnore
+	@Override
+	public LocalDateTime getUpdatedOn() {
+		return audit.getUpdatedOn();
 	}
 }

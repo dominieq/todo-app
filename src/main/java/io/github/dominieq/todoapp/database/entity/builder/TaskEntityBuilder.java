@@ -1,5 +1,6 @@
 package io.github.dominieq.todoapp.database.entity.builder;
 
+import io.github.dominieq.todoapp.database.entity.AuditEntity;
 import io.github.dominieq.todoapp.database.entity.TaskEntity;
 
 import java.time.LocalDateTime;
@@ -64,6 +65,6 @@ public final class TaskEntityBuilder {
 	}
 
 	public TaskEntity build() {
-		return new TaskEntity(id, description, done, deadline, createdOn, updatedOn);
+		return new TaskEntity(id, description, done, deadline, new AuditEntity(createdOn, updatedOn));
 	}
 }
