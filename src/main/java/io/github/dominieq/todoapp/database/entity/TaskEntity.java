@@ -4,34 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tasks")
-public class TaskEntity implements Audit, Serializable {
+public class TaskEntity extends AbstractTask {
 
 	private static final long serialVersionUID = 1025020152602626836L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
-	private Integer id;
-
-	@NotBlank(message = "TaskEntity.Description should not be empty.")
-	private String description;
-
-	@NotNull(message = "TaskEntity.Done should exist.")
-	private Boolean done;
-
 	private LocalDateTime deadline;
-
-	@JsonIgnore
-	@Embedded
-	private AuditEntity audit = new AuditEntity();
 
 	@JsonIgnore
 	@ManyToOne
@@ -49,11 +31,9 @@ public class TaskEntity implements Audit, Serializable {
 					  final AuditEntity audit,
 					  final TaskGroupEntity group) {
 
-		this.id = id;
-		this.description = description;
-		this.done = done;
+		super(id, description, done, audit);
+
 		this.deadline = deadline;
-		this.audit = audit;
 		this.group = group;
 	}
 
@@ -61,17 +41,14 @@ public class TaskEntity implements Audit, Serializable {
 	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
 		final TaskEntity that = (TaskEntity) o;
-		return Objects.equals(id, that.id) &&
-				Objects.equals(description, that.description) &&
-				Objects.equals(done, that.done) &&
-				Objects.equals(deadline, that.deadline) &&
-				Objects.equals(audit, that.audit);
+		return Objects.equals(deadline, that.deadline);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), id, description, done, deadline, audit);
+		return Objects.hash(super.hashCode(), deadline);
 	}
 
 	@Override
@@ -86,32 +63,8 @@ public class TaskEntity implements Audit, Serializable {
 				.toString();
 	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Boolean getDone() {
-		return done;
-	}
-
 	public LocalDateTime getDeadline() {
 		return deadline;
-	}
-
-	@JsonIgnore
-	@Override
-	public LocalDateTime getCreatedOn() {
-		return audit.getCreatedOn();
-	}
-
-	@JsonIgnore
-	@Override
-	public LocalDateTime getUpdatedOn() {
-		return audit.getUpdatedOn();
 	}
 
 	public TaskGroupEntity getGroup() {
