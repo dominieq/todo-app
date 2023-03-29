@@ -2,10 +2,13 @@ package io.github.dominieq.todoapp.database.entity.builder;
 
 import io.github.dominieq.todoapp.database.entity.TaskEntity;
 
+import java.time.LocalDateTime;
+
 public final class TaskEntityBuilder {
 	private Integer id;
 	private String description;
 	private Boolean done;
+	private LocalDateTime deadline;
 
 	private TaskEntityBuilder() {
 	}
@@ -22,6 +25,7 @@ public final class TaskEntityBuilder {
 		this.id = entity.getId();
 		this.description = entity.getDescription();
 		this.done = entity.getDone();
+		this.deadline = entity.getDeadline();
 		return this;
 	}
 
@@ -40,7 +44,12 @@ public final class TaskEntityBuilder {
 		return this;
 	}
 
+	public TaskEntityBuilder withDeadline(final LocalDateTime deadline) {
+		this.deadline = deadline;
+		return this;
+	}
+
 	public TaskEntity build() {
-		return new TaskEntity(id, description, done);
+		return new TaskEntity(id, description, done, deadline);
 	}
 }

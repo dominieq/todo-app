@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -25,17 +26,21 @@ public class TaskEntity implements Serializable {
 	@NotNull(message = "TaskEntity.Done should exist.")
 	private Boolean done;
 
+	private LocalDateTime deadline;
+
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
 	protected TaskEntity() {
 	}
 
 	public TaskEntity(final Integer id,
 					  final String description,
-					  final Boolean done) {
+					  final Boolean done,
+					  final LocalDateTime deadline) {
 
 		this.id = id;
 		this.description = description;
 		this.done = done;
+		this.deadline = deadline;
 	}
 
 	@Override
@@ -45,12 +50,13 @@ public class TaskEntity implements Serializable {
 		final TaskEntity that = (TaskEntity) o;
 		return Objects.equals(id, that.id) &&
 				Objects.equals(description, that.description) &&
-				Objects.equals(done, that.done);
+				Objects.equals(done, that.done) &&
+				Objects.equals(deadline, that.deadline);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, description, done);
+		return Objects.hash(id, description, done, deadline);
 	}
 
 	@Override
@@ -59,6 +65,7 @@ public class TaskEntity implements Serializable {
 				.add("id", id)
 				.add("description", description)
 				.add("done", done)
+				.add("deadline", deadline)
 				.toString();
 	}
 
@@ -72,5 +79,9 @@ public class TaskEntity implements Serializable {
 
 	public Boolean getDone() {
 		return done;
+	}
+
+	public LocalDateTime getDeadline() {
+		return deadline;
 	}
 }
