@@ -9,6 +9,8 @@ public final class TaskEntityBuilder {
 	private String description;
 	private Boolean done;
 	private LocalDateTime deadline;
+	private LocalDateTime createdOn;
+	private LocalDateTime updatedOn;
 
 	private TaskEntityBuilder() {
 	}
@@ -26,6 +28,8 @@ public final class TaskEntityBuilder {
 		this.description = entity.getDescription();
 		this.done = entity.getDone();
 		this.deadline = entity.getDeadline();
+		this.createdOn = entity.getCreatedOn();
+		this.updatedOn = entity.getUpdatedOn();
 		return this;
 	}
 
@@ -49,7 +53,17 @@ public final class TaskEntityBuilder {
 		return this;
 	}
 
+	public TaskEntityBuilder withCreatedOn(final LocalDateTime createdOn) {
+		this.createdOn = createdOn;
+		return this;
+	}
+
+	public TaskEntityBuilder withUpdatedOn(final LocalDateTime updatedOn) {
+		this.updatedOn = updatedOn;
+		return this;
+	}
+
 	public TaskEntity build() {
-		return new TaskEntity(id, description, done, deadline);
+		return new TaskEntity(id, description, done, deadline, createdOn, updatedOn);
 	}
 }

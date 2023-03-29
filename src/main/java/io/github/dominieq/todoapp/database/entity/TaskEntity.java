@@ -1,5 +1,6 @@
 package io.github.dominieq.todoapp.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 
 import javax.persistence.*;
@@ -28,6 +29,12 @@ public class TaskEntity implements Serializable {
 
 	private LocalDateTime deadline;
 
+	@JsonIgnore
+	private LocalDateTime createdOn;
+
+	@JsonIgnore
+	private LocalDateTime updatedOn;
+
 	@SuppressWarnings("unused") // Empty constructor is for CDI purpose.
 	protected TaskEntity() {
 	}
@@ -35,12 +42,26 @@ public class TaskEntity implements Serializable {
 	public TaskEntity(final Integer id,
 					  final String description,
 					  final Boolean done,
-					  final LocalDateTime deadline) {
+					  final LocalDateTime deadline,
+					  final LocalDateTime createdOn,
+					  final LocalDateTime updatedOn) {
 
 		this.id = id;
 		this.description = description;
 		this.done = done;
 		this.deadline = deadline;
+		this.createdOn = createdOn;
+		this.updatedOn = updatedOn;
+	}
+
+	@PrePersist
+	void prePersist() {
+		this.createdOn = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	void preUpdate() {
+		this.updatedOn = LocalDateTime.now();
 	}
 
 	@Override
@@ -51,12 +72,14 @@ public class TaskEntity implements Serializable {
 		return Objects.equals(id, that.id) &&
 				Objects.equals(description, that.description) &&
 				Objects.equals(done, that.done) &&
-				Objects.equals(deadline, that.deadline);
+				Objects.equals(deadline, that.deadline) &&
+				Objects.equals(createdOn, that.createdOn) &&
+				Objects.equals(updatedOn, that.updatedOn);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, description, done, deadline);
+		return Objects.hash(id, description, done, deadline, createdOn, updatedOn);
 	}
 
 	@Override
@@ -66,6 +89,8 @@ public class TaskEntity implements Serializable {
 				.add("description", description)
 				.add("done", done)
 				.add("deadline", deadline)
+				.add("createdOn", createdOn)
+				.add("updatedOn", updatedOn)
 				.toString();
 	}
 
@@ -83,5 +108,13 @@ public class TaskEntity implements Serializable {
 
 	public LocalDateTime getDeadline() {
 		return deadline;
+	}
+
+	public LocalDateTime getCreatedOn() {
+		return createdOn;
+	}
+
+	public LocalDateTime getUpdatedOn() {
+		return updatedOn;
 	}
 }
