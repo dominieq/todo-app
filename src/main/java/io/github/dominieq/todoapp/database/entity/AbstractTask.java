@@ -45,7 +45,7 @@ public abstract class AbstractTask implements Audit, Serializable {
 	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		final TaskEntity that = (TaskEntity) o;
+		final AbstractTask that = (AbstractTask) o;
 		return Objects.equals(id, that.id) &&
 				Objects.equals(description, that.description) &&
 				Objects.equals(done, that.done) &&
