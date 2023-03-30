@@ -21,6 +21,19 @@ public final class TaskGroupDtoBuilder {
 		return new TaskGroupDtoBuilder();
 	}
 
+	public TaskGroupDtoBuilder from(final TaskGroupDto dto) {
+		if (dto == null) {
+			return this;
+		}
+
+		this.id = dto.getId();
+		this.description = dto.getDescription();
+		this.done = dto.getDone();
+		this.deadline = dto.getDeadline();
+		this.tasks = dto.getTasks();
+		return this;
+	}
+
 	public TaskGroupDtoBuilder withId(final Integer id) {
 		this.id = id;
 		return this;

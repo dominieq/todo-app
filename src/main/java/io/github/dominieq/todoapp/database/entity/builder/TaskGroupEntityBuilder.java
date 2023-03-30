@@ -25,6 +25,21 @@ public final class TaskGroupEntityBuilder {
 		return new TaskGroupEntityBuilder();
 	}
 
+	public TaskGroupEntityBuilder from(final TaskGroupEntity entity) {
+		if (entity == null) {
+			return this;
+		}
+
+		this.id = entity.getId();
+		this.description = entity.getDescription();
+		this.done = entity.getDone();
+		this.createdOn = entity.getCreatedOn();
+		this.updatedOn = entity.getUpdatedOn();
+		this.tasks = entity.getTasks();
+		this.project = entity.getProject();
+		return this;
+	}
+
 	public TaskGroupEntityBuilder withId(final Integer id) {
 		this.id = id;
 		return this;
